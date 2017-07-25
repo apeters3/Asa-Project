@@ -49,26 +49,32 @@ vassal.hist.variety$BBMean<-vassal.hist.BBUnique
 names(vassal.hist.variety)[names(vassal.hist.variety) == "vassal.hist.variety"] <- "Variety"
       
 
-
-
-
 vassal.hist.variety
 
-  
-  
-annotation_custom(tableGrob(mytable), xmin=35, xmax=50, ymin=-2.5, ymax=-1)
-table(vassal.hist.variety)
 
-#Making Histogram from vassal.hist.BBUnique with qplot
-par(mfrow=c(1,2))
-q<-qplot(BBMean,data=vassal.hist.variety,xlab="Budburst DOY Mean",ylab="Frequency",binwidth=2)
-q
-outliers<-vassal.hist.variety%>%filter(BBMean>=110)
+hist(whatevs, xaxt='n') ## add the rest of arguments to make the histogram look pretty
+position=c(67,75,100,…) ## fill with the values of the x axis of your original histogram
+axis(1, at=position, labels=c(“March 1st”,”June 2nd”,”July 3rd”,…), cex.axis=1.25,l as=1) ## fill the labels content according to the desired dates.
+
+
+#Making Histogram from vassal.hist.BBUnique with hist()
+vassal.hist.variety2<-subset(vassal.hist.variety,BBMean<110)
+hist(vassal.hist.variety2$BBMean,22,col="indianred4",ylim=c(0,15),main=NULL,xlab="Budburst Day of Year",cex.lab=1.5,font.lab=2,xaxt="n")
+BBDOYPositions<-c(65,70,75,80,85,90,95)
+axis(1,at=BBDOYPositions,labels=c("March 6th","March 11th","March 16th","March 21st","March 26th","March 31st","April 5th"),cex.axis=1.25,as=1)
+chardonnay.value=vassal.hist.variety2[which(vassal.hist.variety2$Variety=='Chardonnay'),2]
+arrows(chardonnay.value,10,chardonnay.value,6,lwd=4)
+cabSauv.value=vassal.hist.variety2[which(vassal.hist.variety2$Variety=="Cabernet_Sauvignon"),2]
+arrows(cabSauv.value,10,cabSauv.value,2,lwd=4)
+
+text(77.07212,10.5,"Chardonnay",cex=1.25,font=2)
+text(89.67708,10.5,"Cabernet Sauvignon",cex=1.25,font=2)
+     
+     
+#Lineplot BB DOY by variety 
 VassalBBMeans<-vassal.hist.variety$BBMean
 VassalBBVarieties<-vassal.hist.variety$Variety
 e<-ggplot(vassal.hist.variety,aes(BBmean,VassalBBVarieties))
 e+geom_point(aes(x=BBMean,y=VassalBBVarieties),size=2,color="red")+theme(panel.background=element_rect(fill="white",color="lightblue",size=0.5,linetype="solid"),panel.grid.major=element_line(size=0.5,linetype = "solid",colour = "black"),axis.text.y = element_text(face="bold", color="black"))+labs(x="Mean Budburst Day of Year by Variety",y="Variety")+ggtitle("Mean Budburst Day of Year")+scale_x_continuous(breaks=seq(0,250,10))
 
  
-annotation_custom(grid.table(vassal.hist.variety,rows=NULL))xmin=35, xmax=50, ymin=-2.5, ymax=-1)
-tab<-annotation_custom(grid.table(vassal.hist.variety,rows=NULL),ttheme_default(base_size=5))

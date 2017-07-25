@@ -1,11 +1,12 @@
-#phenological Intervals and Cleaning Data MERGED DATA SHEETS VERSION
+#Cleaning Vassal Data Set + Generating Avg. Phenological Intervals + Correlating Phenological Intervals 
+
 #Housekeeping
 setwd("/Users/wolkolab/Asa Project")
 rm(list=ls())
 options(stringsAsFactors = FALSE)
 library(plyr)
 
-
+########### Merging Data Sheets and Cleaning Vassal ###################
 
 #Merge Vassal sheets 
 vassal.master<-read.csv("vassal_pheno.csv" ,header=T,sep=",",as.is=T)[,1:9]
@@ -112,9 +113,6 @@ clean.vassal<-function(x){
 }
 
 
-
-
-#vassal.final<-read.csv("vassal_pheno.csv" ,header=T,sep=",",as.is=T)
 dim(final.vassal)
 
 #final.vassal<-final.vassal[,1:9]
@@ -134,9 +132,10 @@ final.vassal$review<-rep(NA,nrow(final.vassal))
 #Apply Cleaning
 vassal.clean<-clean.vassal(final.vassal)
 
-#Write new csv
-#write.csv(vassal.clean,file="Vassal_cleaned2.csv")
 
+#Write new vassal csv
+
+#write.csv(vassal.clean,file="Vassal_cleaned2.csv")
 
 
 head(vassal.clean)
@@ -146,6 +145,8 @@ vassal.clean$FLOW<-as.Date(vassal.clean$FLOW,format="%d/%m/%Y")
 vassal.clean$VER<-as.Date(vassal.clean$VER,format="%d/%m/%Y")
 vassal.clean$MAT<-as.Date(vassal.clean$MAT,format="%d/%m/%Y")
 
+
+######################## Some Phenological Interval Means and Standard Deviations #############
 
 #Budbreak-Maturation Mean and Standard Dev.
 
@@ -257,7 +258,7 @@ for(i in 1:nvar){
 variety.mean.bud.ver
 
 
-### Let's plot
+######################### Plotting Some Avg. Phenological Intervals ###########################
 
 #Budbreak-Maturation Plot
 
@@ -280,7 +281,7 @@ for(i in 1:201){
 
 data.to.plot<-variety.mean.bud.flow[with(variety.mean.bud.flow,order(`mean Bud-Flow`)),]
 data.to.plot<-data.to.plot%>%filter(variety!="Marsanne")%>%filter(variety!="CarignanNoir")%>%filter(variety!="Listan")
-plot(x=NULL,y=NULL,xlim=c(10,150),ylim=c(1,60),ylab="Variety",xlab="Budreak-Flowering in days", main="Budbreak to Flowering Interval",cex=1.5,cex.axis=1.5, cex.lab=1.5,cex.main=2)
+plot(x=NULL,y=NULL,xlim=c(10,150),ylim=c(1,60),ylab="Variety",xlab="Budreak-Flowering in days",main="Budburst to Flowering Interval",cex=1.5,cex.axis=1.5, cex.lab=1.5,font.lab=2)
 points(data.to.plot$`mean Bud-Flow`,1:198,pch=19)
 
 for(i in 1:198){
@@ -295,7 +296,7 @@ for(i in 1:198){
 }
 text(39,1,"Airen",cex=.75)
 text(46,2,"Aledo",cex=.75)
-text(47.82105,3,"Cab. Sauvignon",cex=.75)
+text(47.82105,3,"Cabernet Sauvignon",cex=.85,font=2) ###late
 text(50,4,"Sauvignon rose",cex=.75)
 text(52,5,"Cab. Franc",cex=.75)
 text(52,6,"Morrestal",cex=.75)
@@ -306,14 +307,14 @@ text(54,10,"Durif",cex=.75)
 text(54,11,"Barbera",cex=.75)
 text(55.5,12,"Dimiat",cex=.75)     
 text(56,13,"Souzao",cex=.75)
-text(56,14,"Pinot Noir",cex=.75)
+text(56,14,"Pinot Noir",cex=.75) 
 text(56,15,"Syrah",cex=.75)
 text(57,16,"Tinto Fino",cex=.75)
 text(57,17,"Merlot",cex=.75)
 text(57,18,"Grenache Noir",cex=.75)
 text(54,19,"Verdelho de Madere",cex=.75)    
-text(56,20,"Chardonnay",cex=.75)
-text(56,21,"Primitivo",cex=.75)
+text(56,20,"Chardonnay",cex=.85,font=2)  #early
+text(56,21,"Primitivo",cex=.75,font=2)
 text(56,22,"Korai Olasz",cex=.75)
 text(57,23,"Gold",cex=.75)
 text(58,24,"Muscat Ottonel",cex=.75)
@@ -363,10 +364,11 @@ for(i in 1:198){
 
 #Veraison to Maturation Plot
 data.to.plot<-variety.mean.ver.mat[with(variety.mean.ver.mat,order(`mean Ver-Mat`)),]
-plot(x=NULL,y=NULL,xlim=c(10,80),ylim=c(1,80),ylab="Variety",xlab="Veraison-Maturity in days", main="Veraison to Maturity Interval" )
-points(data.to.plot$`mean Ver-Mat`,1:201,pch=19)
+data.to.plot<-data.to.plot%>%filter(variety!="Viognier")
+plot(x=NULL,y=NULL,xlim=c(10,80),ylim=c(1,80),ylab="Variety",xlab="Veraison-Maturity in days", main="Veraison to Maturity Interval",cex=1.5,cex.axis=1.5, cex.lab=1.5,font.lab=2)
+points(data.to.plot$`mean Ver-Mat`,1:200,pch=19)
 
-for(i in 1:201){
+for(i in 1:200){
   print(i)
   if(!is.na(data.to.plot[i,"mean Ver-Mat"])){
     low.conf<-data.to.plot[i,"mean Ver-Mat"]-data.to.plot[i,"sd Ver-Mat"]
@@ -376,7 +378,8 @@ for(i in 1:201){
     }
   }
 }
-
+text(29.93258,46,"Cabernet Sauvignon",cex=.85,font=2)
+text(24.07246,22,"Chardonnay",cex=.85,font=2)
 
 #Budbreak to veraison
 data.to.plot<-variety.mean.bud.ver[with(variety.mean.bud.ver,order(`mean Bud-Ver`)),]
@@ -394,6 +397,8 @@ for(i in 1:201){
   }
 }
 
+
+###################### Plotting correlation between different pheno-intervals #############
 
 
 #plot multi-panel plots
@@ -431,35 +436,31 @@ nomarsanne<-combined.datasets1%>%filter(variety!="Marsanne")%>%filter(variety!="
 
 nomarsanne<-na.omit(nomarsanne)
 plot(nomarsanne$`mean Bud-Flow`,nomarsanne$`mean Flow-Ver`,
-     xlim=c(0,150),ylim=c(0,150),pch=19,cex=1.5,cex.axis=1.5, cex.lab=1.5,cex.main=1.5,
+     xlim=c(0,150),ylim=c(0,150),pch=19,cex=1.5,cex.axis=1.5, cex.lab=1.5,cex.main=1.5,font.lab=2,
      xlab='Budbreak to Flowering',ylab='Flowering to Veraison', 
      main='Budbreak to Flowering Intervals vs. Flowering to Veraison Intervals')
 myline<-lm(nomarsanne$`mean Flow-Ver`~nomarsanne$`mean Bud-Flow`)    
 abline(myline,col="grey",lwd=2)
 
-text(nomarsanne[which.min(nomarsanne$`mean Flow-Ver`),c(2,4)],pos=3,
+text(nomarsanne[which.min(nomarsanne$`mean Flow-Ver`),c(2,4)],pos=2,
      nomarsanne[which.min(nomarsanne$`mean Flow-Ver`),1])
-text(nomarsanne[which.max(nomarsanne$`mean Flow-Ver`),c(2,4)],pos=3,
+text(nomarsanne[which.max(nomarsanne$`mean Flow-Ver`),c(2,4)],pos=2,
      nomarsanne[which.max(nomarsanne$`mean Flow-Ver`),1])
 
 text(nomarsanne[which.min(nomarsanne$`mean Bud-Flow`),c(2,4)],pos=2,
      nomarsanne[which.min(nomarsanne$`mean Bud-Flow`),1])
-text(nomarsanne[which.max(nomarsanne$`mean Bud-Flow`),c(2,4)],pos=3,
+text(nomarsanne[which.max(nomarsanne$`mean Bud-Flow`),c(2,4)],pos=4,
      nomarsanne[which.max(nomarsanne$`mean Bud-Flow`),1])
 
 cor.BBFLFLVER<-cor(nomarsanne$`mean Bud-Flow`,nomarsanne$`mean Flow-Ver`,use='pairwise.complete.obs')
-text(50,150,cor.BBFLFLVER)
-
-
-
-
-
+cor.BBFLFLVER=
+text(50,100,"r=0.1714")
 
 ## plot correlation between FL-VER and VER-MAT ----main 
 combined.datasets2<-cbind(variety.mean.flow.ver,variety.mean.ver.mat[,2:3])
 combined.datasets2<-na.omit(combined.datasets2)
 plot(combined.datasets2$`mean Flow-Ver`,combined.datasets2$`mean Ver-Mat`,
-     xlim=c(0,250),ylim=c(0,250),pch=19,cex=1.5,cex.axis=1.5, cex.lab=1.5,cex.main=1.5,
+     xlim=c(0,250),ylim=c(0,250),pch=19,cex=1.5,cex.axis=1.5, cex.lab=1.5,cex.main=1.5,font.lab=2,
      xlab='Flowering to Veraison',ylab='Veraison to Maturity', 
      main='Flowering to Veraison vs. Veraison to Maturity Intervals')
 myline<-lm(combined.datasets2$`mean Ver-Mat`~combined.datasets2$`mean Flow-Ver`)    
@@ -476,7 +477,7 @@ text(combined.datasets2[which.max(combined.datasets2$`mean Ver-Mat`),c(2,4)],pos
      combined.datasets2[which.max(combined.datasets2$`mean Ver-Mat`),1])
 
 cor.FLVERVERMAT<-cor(combined.datasets2$`mean Flow-Ver`,combined.datasets2$`mean Ver-Mat`,use='pairwise.complete.obs')
-text(50,150,cor.FLVERVERMAT)
+text(50,100,"r=0.1155")
 
 ## plot correlation between BUD-VER, VER-MAT
 combined.datasets3<-cbind(variety.mean.bud.ver,variety.mean.ver.mat[,2:3])
